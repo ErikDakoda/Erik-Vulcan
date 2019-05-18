@@ -12,7 +12,7 @@ import './bonus/TooltipIntl';
 import './bonus/TooltipIconButton';
 
 import './core/Card';
-import './core/Datatable';
+//import './core/Datatable';
 import './core/EditButton';
 import './core/Loading';
 import './core/ModalTrigger';
