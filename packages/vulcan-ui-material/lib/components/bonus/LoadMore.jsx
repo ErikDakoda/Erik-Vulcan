@@ -50,6 +50,9 @@ const LoadMore = ({
   const title = `${loadMoreText} (${count}/${totalCount})`;
   const hasMore = totalCount > count;
   const countValues = { count, totalCount };
+  if (typeof count === 'undefined' || typeof totalCount === 'undefined') {
+    showCount = false;
+  }
   
   const loadMoreButton = useTextButton
     ?
