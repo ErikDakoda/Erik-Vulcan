@@ -96,7 +96,7 @@ export const validateDocument = (document, collection, context) => {
 
   1. Check that the current user has permission to insert each field
   2. Run SimpleSchema validation step
-  
+
 */
 export const validateModifier = (modifier, data, document, collection, context) => {
   const schema = collection.simpleSchema()._schema;
@@ -226,7 +226,7 @@ export const validateDocumentNotUsed = (document, collection, context) => {
   3. Check field types
   4. Check for missing fields
   5. Run SimpleSchema validation step (for now)
-  
+
 */
 export const validateModifierNotUsed = (modifier, document, collection, context) => {
   const { Users, currentUser } = context;
