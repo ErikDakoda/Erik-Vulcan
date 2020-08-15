@@ -46,6 +46,7 @@ import pickBy from 'lodash/pickBy';
 import omit from 'lodash/omit';
 import without from 'lodash/without';
 import _filter from 'lodash/filter';
+import omitBy from 'lodash/omitBy';
 
 import { convertSchema, formProperties } from '../modules/schema_utils';
 import { isEmptyValue } from '../modules/utils';
@@ -81,6 +82,8 @@ const getDefaultValues = convertedSchema => {
   return pickBy(mapValues(convertedSchema, field => field.defaultValue), value => value);
 };
 
+const compactObject = o => omitBy(o, f => f === null || f === undefined);
+
 const getInitialStateFromProps = nextProps => {
   const collection = nextProps.collection;
   const schema = nextProps.schema ? new SimpleSchema(nextProps.schema) : collection.simpleSchema();
@@ -88,7 +91,8 @@ const getInitialStateFromProps = nextProps => {
   const formType = nextProps.document ? 'edit' : 'new';
   // for new document forms, add default values to initial document
   const defaultValues = formType === 'new' ? getDefaultValues(convertedSchema) : {};
-  const initialDocument = merge({}, defaultValues, nextProps.prefilledProps, nextProps.document);
+  // note: we remove null/undefined values from the loaded document so they don't overwrite possible prefilledProps
+  const initialDocument = merge({}, defaultValues, nextProps.prefilledProps, compactObject(nextProps.document));
 
   //if minCount is specified, go ahead and create empty nested documents
   Object.keys(convertedSchema).forEach(key => {
@@ -244,7 +248,7 @@ class SmartForm extends Component {
   Get form components, in case any has been overwritten for this specific form
 
   */
-  getMergedComponents = () => mergeWithComponents(this.props.components || this.props.formComponents)
+  getMergedComponents = () => mergeWithComponents(this.props.components || this.props.formComponents);
 
   // --------------------------------------------------------------------- //
   // -------------------------------- Fields ----------------------------- //
@@ -692,10 +696,9 @@ class SmartForm extends Component {
           } else {
             set(newState.currentDocument, path, value);
           }
-          
+
           // 3. in case value had previously been deleted, "undelete" it
           newState.deletedValues = without(newState.deletedValues, path);
-
         }
       });
       if (changeCallback) changeCallback(newState.currentDocument);
@@ -933,7 +936,10 @@ class SmartForm extends Component {
   */
   submitForm = async event => {
     event && event.preventDefault();
+    event && event.stopPropagation();
 
+    const { contextName } = this.props;
+    
     // if form is disabled (there is already a submit handler running) don't do anything
     if (this.state.disabled) {
       return;
@@ -954,7 +960,10 @@ class SmartForm extends Component {
     if (this.getFormType() === 'new') {
       // create document form
       try {
-        const result = await this.props[`create${this.props.typeName}`]({ data });
+        const result = await this.props[`create${this.props.typeName}`]({ input: {
+          data,
+          contextName,
+        } });
         this.newMutationSuccessCallback(result);
       } catch (error) {
         this.mutationErrorCallback(document, error);
@@ -964,8 +973,11 @@ class SmartForm extends Component {
       try {
         const documentId = this.getDocument()._id;
         const result = await this.props[`update${this.props.typeName}`]({
-          selector: { documentId },
-          data,
+          input: {
+            id: documentId,
+            data,
+            contextName,
+          }
         });
         this.editMutationSuccessCallback(result);
       } catch (error) {
@@ -987,7 +999,7 @@ class SmartForm extends Component {
     const deleteDocumentConfirm = this.context.intl.formatMessage({ id: 'forms.delete_confirm' }, { title: documentTitle });
 
     if (window.confirm(deleteDocumentConfirm)) {
-      this.props[`delete${this.props.typeName}`]({ documentId })
+      this.props[`delete${this.props.typeName}`]({ input: { id: documentId } })
         .then(mutationResult => {
           // the mutation result looks like {data:{collectionRemove: null}} if succeeded
           if (this.props.removeSuccessCallback) this.props.removeSuccessCallback({ documentId, documentTitle });
@@ -1003,10 +1015,10 @@ class SmartForm extends Component {
   // --------------------------------------------------------------------- //
   // ------------------------- Props to Pass ----------------------------- //
   // --------------------------------------------------------------------- //
-
+  
   getCommonProps = () => {
     const { errors, currentValues, deletedValues, disabled } = this.state;
-    const { currentUser, prefilledProps, formComponents, itemProperties } = this.props;
+    const { currentUser, prefilledProps, formComponents, itemProperties, contextName } = this.props;
     return {
       errors,
       throwError: this.throwError,
@@ -1024,6 +1036,7 @@ class SmartForm extends Component {
       FormComponents: this.getMergedComponents(),
       itemProperties,
       submitForm: this.submitForm,
+      contextName,
     };
   };
 
@@ -1138,6 +1151,7 @@ SmartForm.propTypes = {
   disabled: PropTypes.bool,
   itemProperties: PropTypes.object,
   successComponent: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  contextName: PropTypes.string,
 
   // callbacks
   ...callbackProps,
