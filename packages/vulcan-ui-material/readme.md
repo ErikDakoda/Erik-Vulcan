@@ -24,12 +24,12 @@ meteor npm install --save mdi-material-ui
 meteor npm install --save react-autosuggest
 meteor npm install --save autosuggest-highlight
 meteor npm install --save react-isolated-scroll
-meteor npm install --save-exact react-keyboard-event-handler@1.3.2
+meteor npm install --save react-keyboard-event-handler
 #meteor npm install --save autosize-input
 meteor npm install --save moment-timezone
 ```
 
-This package no longer depends on `vulcan:ui-boostrap`, so you can remove it.
+This package does not depend on `vulcan:ui-boostrap`, so you can remove it.
 
 To activate the example layout copy the three components to your project and import them:
 
@@ -244,8 +244,9 @@ In addition, the `options` that you pass to any select control have additional p
 | `titleValues` | object  | Values for the intl string |
 | `label`       | node    | Button label as a string or node |
 | `labelId`     | string  | Button label as an intl string ID |
-| `type`        | enum    | `simple`, `fab`, `button`, `submit`, `icon` |
+| `type`        | enum    | `simple`, `fab`, `button`, `submit`, `icon`, `menu` |
 | `size`        | enum    | `icon`, `xsmall`, `small`, `medium`, `large` |
+| `danger`      | bool    | When `true`, the button is highlighted in red on hover |
 | `variant`     | enum    | `text`, `outlined`, `contained` |
 | `placement`   | enum    | Tooltip placement: `bottom-end`, `bottom-start`, `bottom`, `left-end`, `left-start`, `left`, `right-end`, `right-start`, `right`, `top-end`, `top-start`, `top` |
 | `icon`        | node    | Icon element or component name |
@@ -258,5 +259,6 @@ In addition, the `options` that you pass to any select control have additional p
 | `leaveDelay`  | number  | Tooltip leave delay |
 | `parent`      | enum    | Set parent to `popover` if the button's parent is a popover to increase the z-index of the tooltip |
 | `children`    | node    | You can optionally render arbitrary content (instead of a button) |
+| `cursor`      | string  | CSS `cursor` property for the button |
 
 See the Storybook example by running the script `storybook-material`.
