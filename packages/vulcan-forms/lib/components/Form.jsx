@@ -23,6 +23,7 @@ import {
   mergeWithComponents,
   formatLabel,
   getIntlLabel,
+  getIntlKeys,
 } from 'meteor/vulcan:core';
 import React, { Component } from 'react';
 import SimpleSchema from 'simpl-schema';
@@ -384,6 +385,7 @@ class SmartForm extends Component {
     }
 
     field.label = this.getLabel(fieldName);
+    field.intlKeys = this.getIntlKeys(fieldName);
     // // replace value by prefilled value if value is empty
     // const prefill = fieldSchema.prefill || (fieldSchema.form && fieldSchema.form.prefill);
     // if (prefill) {
@@ -497,6 +499,20 @@ class SmartForm extends Component {
     // we do not allow nesting yet
     //subField = this.handleFieldChildren(field, fieldSchema)
     return subField;
+  };
+
+  /*
+  
+  Get a field's intl keys (useful for debugging)
+
+  */
+  getIntlKeys = fieldName => {
+    const collectionName = this.props.collectionName.toLowerCase();
+    return getIntlKeys({
+      fieldName: fieldName,
+      collectionName,
+      schema: this.state.flatSchema,
+    });
   };
 
   /*
@@ -991,11 +1007,20 @@ class SmartForm extends Component {
     if (this.getFormType() === 'new') {
       // create document form
       try {
-        const result = await this.props[`create${this.props.typeName}`]({ input: {
-          data,
-          contextName,
-        } });
-        this.newMutationSuccessCallback(result);
+        const result = await this.props[`create${this.props.typeName}`]({
+          input: {
+            data,
+            contextName,
+          },
+        });
+        const meta = this.props[`create${this.props.typeName}Meta`];
+        // in new versions of Apollo Client errors are no longer thrown/caught
+        // but can instead be provided as props by the useMutation hook
+        if (meta.error) {
+          this.mutationErrorCallback(document, meta.error);
+        } else {
+          this.newMutationSuccessCallback(result);
+        }
       } catch (error) {
         this.mutationErrorCallback(document, error);
       }
@@ -1008,9 +1033,16 @@ class SmartForm extends Component {
             id: documentId,
             data,
             contextName,
-          }
+          },
         });
-        this.editMutationSuccessCallback(result);
+        const meta = this.props[`update${this.props.typeName}Meta`];
+        // in new versions of Apollo Client errors are no longer thrown/caught
+        // but can instead be provided as props by the useMutation hook
+        if (meta.error) {
+          this.mutationErrorCallback(document, meta.error);
+        } else {
+          this.editMutationSuccessCallback(result);
+        }
       } catch (error) {
         this.mutationErrorCallback(document, error);
       }
