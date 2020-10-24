@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Components, registerComponent, getComponent } from 'meteor/vulcan:lib';
+import { registerComponent, getComponent } from 'meteor/vulcan:lib';
+import createReactClass from 'create-react-class';
 import Dropzone from 'react-dropzone';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { FormattedMessage } from 'meteor/vulcan:i18n';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import ComponentMixin from 'meteor/vulcan:ui-material/lib/components/forms/base-controls/mixins/component';
+import MuiFormControl from 'meteor/vulcan:ui-material/lib/components/forms/base-controls/MuiFormControl';
+import MuiFormHelper from 'meteor/vulcan:ui-material/lib/components/forms/base-controls/MuiFormHelper';
+import classNames from 'classnames';
 
 /*
 
@@ -17,7 +19,6 @@ Material UI GUI for Cloudinary Image Upload component
 const styles = theme => ({
   root: {},
 
-  label: {},
 
   uploadField: {
     marginTop: theme.spacing(1),
@@ -44,12 +45,17 @@ const styles = theme => ({
 
   dropzoneActive: {
     borderStyle: 'solid',
-    borderColor: theme.palette.status.info,
+    borderColor: theme.palette.info.main,
+  },
+
+  dropzoneAccept: {
+    borderStyle: 'solid',
+    borderColor: theme.palette.success.main,
   },
 
   dropzoneReject: {
     borderStyle: 'solid',
-    borderColor: theme.palette.status.danger,
+    borderColor: theme.palette.warning.main,
   },
 
   uploadState: {},
@@ -68,90 +74,117 @@ const styles = theme => ({
   },
 });
 
-const UploadInner = props => {
-  const {
-    uploading,
-    images,
-    disabled,
-    maxCount,
-    label,
-    help,
-    options,
-    enableMultiple,
-    onDrop,
-    isDeleted,
-    clearImage,
-    classes,
-  } = props;
 
-  const UploadImage = getComponent(options.uploadImageComponentName || 'UploadImage');
+const UploadInner = createReactClass({
 
-  return (
-    <FormControl component="fieldset" fullWidth={true} className={classes.root}>
-      <FormLabel component="legend" className={classes.label}>
-        {label}
-      </FormLabel>
-      {help && <FormHelperText>{help}</FormHelperText>}
-      <div className={classes.uploadField}>
-        {disabled && !enableMultiple ? null : (
-          <Dropzone
-            style={options.dropzoneStyle}
-            multiple={enableMultiple}
-            onDrop={onDrop}
-            accept="image/*"
-            className={classes.dropzoneBase}
-            activeClassName={classes.dropzoneActive}
-            rejectClassName={classes.dropzoneReject}
-            disabled={disabled}>
-            <div>
-              <FormattedMessage
-                id={`upload.${disabled ? 'maxReached' : 'prompt'}`}
-                values={{ maxCount }}
-              />
-            </div>
-            {uploading && (
-              <div className="upload-uploading">
-                <span>
-                  <FormattedMessage id={'upload.uploading'} />
-                </span>
+  mixins: [ComponentMixin],
+
+  displayName: 'UploadInner',
+
+  render: function () {
+
+    const {
+      uploading,
+      images,
+      disabled,
+      maxCount,
+      options,
+      enableMultiple,
+      onDrop,
+      isDeleted,
+      clearImage,
+      classes,
+    } = this.props;
+
+    const UploadImage = getComponent(options.uploadImageComponentName || 'UploadImage');
+
+    return (
+      <MuiFormControl {...this.getFormControlProperties()} fakeLabel={true} htmlFor={this.getId()}>
+
+        <MuiFormHelper {...this.getFormHelperProperties()}/>
+
+        <div className={classes.uploadField}>
+          {
+            !enableMultiple && images.length
+              ?
+              null
+              :
+              <Dropzone
+                onDrop={onDrop}
+                disabled={disabled}
+                accept="image/*"
+                multiple={enableMultiple}
+              >
+                {dropzoneProps => {
+                  const {
+                    getRootProps,
+                    getInputProps,
+                    isDragActive,
+                    isDragAccept,
+                    isDragReject
+                  } = dropzoneProps;
+
+                  const className = classNames(
+                    classes.dropzoneBase,
+                    isDragActive && classes.dropzoneActive,
+                    isDragAccept && classes.dropzoneAccept,
+                    isDragReject && classes.dropzoneReject,
+                  );
+
+                  return (
+                    <div {...getRootProps({ className, style: options.dropzoneStyle })}>
+                      <input {...getInputProps()} />
+                      <div>
+                        <FormattedMessage id={`upload.${disabled ? 'maxReached' : 'prompt'}`}
+                                          values={{ maxCount }}/>
+                      </div>
+                      {
+                        uploading &&
+                        <div className="upload-uploading">
+                          <span>
+                            <FormattedMessage id={'upload.uploading'}/>
+                          </span>
+                        </div>
+                      }
+                    </div>
+                  );
+                }}
+              </Dropzone>
+          }
+
+          {!!images.length && (
+            <div className={classes.uploadState}>
+              <div className={classes.uploadImages}>
+                {images.map(
+                  (image, index) =>
+                    !isDeleted(index) && (
+                      <UploadImage
+                        clearImage={clearImage}
+                        key={index}
+                        index={index}
+                        image={image}
+                        loading={image.loading}
+                        preview={image.preview}
+                        error={image.error}
+                        style={options.imageStyle}
+                      />
+                    )
+                )}
               </div>
-            )}
-          </Dropzone>
-        )}
-
-        {!!images.length && (
-          <div className={classes.uploadState}>
-            <div className={classes.uploadImages}>
-              {images.map(
-                (image, index) =>
-                  !isDeleted(index) && (
-                    <UploadImage
-                      clearImage={clearImage}
-                      key={index}
-                      index={index}
-                      image={image}
-                      loading={image.loading}
-                      preview={image.preview}
-                      error={image.error}
-                      style={options.imageStyle}
-                    />
-                  )
-              )}
             </div>
-          </div>
-        )}
-      </div>
-    </FormControl>
-  );
-};
+          )}
+        </div>
+
+      </MuiFormControl>
+    );
+  }
+});
 
 UploadInner.propTypes = {
   uploading: PropTypes.bool,
   images: PropTypes.array.isRequired,
   disabled: PropTypes.bool,
   maxCount: PropTypes.number.isRequired,
-  label: PropTypes.string,
-  help: PropTypes.string,
   options: PropTypes.object.isRequired,
   enableMultiple: PropTypes.bool,
   onDrop: PropTypes.func.isRequired,
