@@ -2,7 +2,7 @@
 
 HoC that provides access to flash messages stored in Redux state and actions to operate on them
 
-     NOTE: the code is voluntary a bit verbose, to provide an example 
+     NOTE: the code is voluntary a bit verbose, to provide an example
      of the apollo-link-state mutation patterns
 */
 
@@ -18,7 +18,13 @@ import compose from 'recompose/compose';
 // read (equivalent to selectors)
 const getMessagesQuery = gql`
   query FlashMessage {
-    flashMessages @client
+    flashMessages @client {
+      _id
+      message
+      type
+      seen
+      show
+    }
   }
 `;
 // write (equivalent to actions)
