@@ -23,7 +23,7 @@ import {
 import {
     buildDeleteQuery
 } from '../../lib/modules/containers/delete'
-import { MockedProvider } from 'meteor/vulcan:test';
+import { MockedProvider } from '@apollo/client/testing';
 import { mount } from 'enzyme';
 import expect from 'expect';
 import gql from 'graphql-tag';
@@ -47,7 +47,7 @@ describe('vulcan:core/container/mutations', () => {
                 value: fragmentName
             }
         }],
-        toString: () => `fragment FoosDefaultFragment on Foo { 
+        toString: () => `fragment FoosDefaultFragment on Foo {
         _id
         hello
         __typename
