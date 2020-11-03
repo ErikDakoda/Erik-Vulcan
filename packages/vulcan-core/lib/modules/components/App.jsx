@@ -92,7 +92,7 @@ class App extends PureComponent {
   */
   UNSAFE_componentWillMount() {
     this.unlisten = this.props.history.listen((location, action) => {
-      this.clear();
+      this.clearMessages();
     });
   }
 
@@ -100,10 +100,10 @@ class App extends PureComponent {
     this.unlisten();
   }
 
-  /* 
-  
+  /*
+
   Show a flash message
-  
+
   */
   flash = message => {
     this.setState({
@@ -116,7 +116,7 @@ class App extends PureComponent {
   Clear all flash messages
 
   */
-  clear = () => {
+  clearMessages = () => {
     this.setState({ messages: [] });
   };
 
@@ -160,7 +160,7 @@ class App extends PureComponent {
 
   Load a locale by triggering the refetch() method passed down by
   withLocalData HoC
-  
+
   */
   loadLocaleStrings = async localeId => {
     const result = await this.props.locale.refetch({ localeId });
@@ -186,7 +186,7 @@ class App extends PureComponent {
 
   render() {
     const routeNames = Object.keys(Routes);
-    const { flash } = this;
+    const { flash, clearMessages } = this;
     const { messages } = this.state;
     const localeId = this.state.locale.id;
     //const LayoutComponent = currentRoute.layoutName ? Components[currentRoute.layoutName] : Components.Layout;
@@ -201,7 +201,7 @@ class App extends PureComponent {
     return (
       <IntlProvider {...intlObject}>
         <IntlContext.Provider value={intlObject}>
-          <MessageContext.Provider value={{ messages, flash }}>
+          <MessageContext.Provider value={{ messages, flash, clearMessages }}>
             <Components.ScrollToTop />
             <div className={`locale-${localeId}`}>
               <Components.HeadTags />
