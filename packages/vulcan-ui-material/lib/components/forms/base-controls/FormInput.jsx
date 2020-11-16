@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
 import withStyles from '@material-ui/core/styles/withStyles';
 import ComponentMixin from './mixins/component';
-import MuiFormControl from './MuiFormControl';
-import MuiFormHelper from './MuiFormHelper';
+import FormControlLayout from './FormControlLayout';
+import FormHelper from './FormHelper';
 import Input from '@material-ui/core/Input';
 import StartAdornment, {hideStartAdornment} from './StartAdornment';
 import EndAdornment from './EndAdornment';
@@ -41,12 +41,12 @@ export const styles = theme => ({
 
 
 //noinspection JSUnusedGlobalSymbols
-const MuiInput = createReactClass({
+const FormInput = createReactClass({
   element: null,
 
   mixins: [ComponentMixin],
 
-  displayName: 'MuiInput',
+  displayName: 'FormInput',
 
   propTypes: {
     type: PropTypes.oneOf([
@@ -141,11 +141,11 @@ const MuiInput = createReactClass({
     }
 
     return (
-        <MuiFormControl {...this.getFormControlProperties()}
+        <FormControlLayout {...this.getFormControlProperties()}
                         htmlFor={this.getId()}>
           {element}
-          <MuiFormHelper {...this.getFormHelperProperties()}/>
-        </MuiFormControl>
+          <FormHelper {...this.getFormHelperProperties()}/>
+        </FormControlLayout>
     );
   },
 
@@ -186,4 +186,4 @@ const MuiInput = createReactClass({
 });
 
 
-export default withStyles(styles)(MuiInput);
+export default withStyles(styles)(FormInput);

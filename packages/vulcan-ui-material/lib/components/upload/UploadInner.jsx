@@ -6,8 +6,8 @@ import Dropzone from 'react-dropzone';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { FormattedMessage } from 'meteor/vulcan:i18n';
 import ComponentMixin from 'meteor/vulcan:ui-material/lib/components/forms/base-controls/mixins/component';
-import MuiFormControl from 'meteor/vulcan:ui-material/lib/components/forms/base-controls/MuiFormControl';
-import MuiFormHelper from 'meteor/vulcan:ui-material/lib/components/forms/base-controls/MuiFormHelper';
+import FormControlLayout from 'meteor/vulcan:ui-material/lib/components/forms/base-controls/FormControlLayout';
+import FormHelper from 'meteor/vulcan:ui-material/lib/components/forms/base-controls/FormHelper';
 import classNames from 'classnames';
 
 /*
