@@ -1,8 +1,8 @@
 /*
 
-Generic mutation wrapper to update a document in a collection. 
+Generic mutation wrapper to update a document in a collection.
 
-Sample mutation: 
+Sample mutation:
 
   mutation updateMovie($input: UpdateMovieInput) {
     updateMovie(input: $input) {
@@ -15,7 +15,7 @@ Sample mutation:
     }
   }
 
-Arguments: 
+Arguments:
 
   - input
     - input.selector: a selector to indicate the document to update
@@ -24,7 +24,7 @@ Arguments:
 Child Props:
 
   - updateMovie({ selector, data })
-  
+
 */
 
 import React from 'react';
