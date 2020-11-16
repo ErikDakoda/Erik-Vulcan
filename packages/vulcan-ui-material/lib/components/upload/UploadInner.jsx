@@ -99,9 +99,9 @@ const UploadInner = createReactClass({
     const UploadImage = getComponent(options.uploadImageComponentName || 'UploadImage');
 
     return (
-      <MuiFormControl {...this.getFormControlProperties()} fakeLabel={true} htmlFor={this.getId()}>
+      <FormControlLayout {...this.getFormControlProperties()} fakeLabel={true} htmlFor={this.getId()}>
 
-        <MuiFormHelper {...this.getFormHelperProperties()}/>
+        <FormHelper {...this.getFormHelperProperties()}/>
 
         <div className={classes.uploadField}>
           {
@@ -175,7 +175,7 @@ const UploadInner = createReactClass({
           )}
         </div>
 
-      </MuiFormControl>
+      </FormControlLayout>
     );
   }
 });
