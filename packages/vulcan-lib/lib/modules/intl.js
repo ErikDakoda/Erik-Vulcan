@@ -1,3 +1,4 @@
+import React from 'react';
 import SimpleSchema from 'simpl-schema';
 import { getSetting } from '../modules/settings';
 import { debug, Utils } from 'meteor/vulcan:lib';
@@ -61,8 +62,18 @@ export const getString = ({ id, values, defaultMessage, messages, locale }) => {
       }, []);
     });
 
-    message = messageArray.length === 1 ? messageArray[0] : messageArray;
-    message = pluralizeString(message, values);
+    if (messageArray.length === 1) {
+      message = messageArray[0];
+    } else {
+      message = messageArray.reduce((accumulator, message, index) => {
+        if (typeof message === 'string' && message.length) {
+          accumulator.push(message);
+        } else if (!!message) {
+          accumulator.push(React.cloneElement(message, { key: index }));
+        }
+        return accumulator;
+      }, []);
+    }
   }
 
   return message;
