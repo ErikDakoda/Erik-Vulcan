@@ -1,6 +1,6 @@
 import React from 'react';
 import SimpleSchema from 'simpl-schema';
-import { getSetting } from '../modules/settings';
+import { getSetting } from './settings';
 import { debug, Utils } from 'meteor/vulcan:lib';
 
 export const defaultLocale = getSetting('locale', 'en-US');
@@ -47,7 +47,7 @@ export const getString = ({ id, values, defaultMessage, messages, locale }) => {
       messageArray = messageArray.reduce((accumulator, message) => {
         if (typeof message !== 'string') {
           accumulator.push(message);
-        } else if (typeof value === 'string') {
+        } else if (typeof value === 'string' || typeof value === 'number') {
           accumulator.push(message.replaceAll(`{${key}}`, value));
         } else {
           const parts = message.split(new RegExp(`{${key}}`, 'g'));
