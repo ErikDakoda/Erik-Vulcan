@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { registerComponent, instantiateComponent, Utils } from 'meteor/vulcan:core';
 import { intlShape } from 'meteor/vulcan:i18n';
 import withStyles from '@material-ui/core/styles/withStyles';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import useTheme from '@material-ui/core/styles/useTheme';
 import withTheme from '@material-ui/core/styles/withTheme';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
@@ -99,6 +101,8 @@ const styles = theme => ({
 });
 
 const TooltipButton = (props, { intl }) => {
+  const theme = useTheme();
+
   const {
     title,
     titleId,
@@ -114,7 +118,6 @@ const TooltipButton = (props, { intl }) => {
     danger,
     className,
     classes,
-    theme,
     enterDelay,
     leaveDelay,
     buttonRef,
@@ -124,7 +127,7 @@ const TooltipButton = (props, { intl }) => {
     TooltipProps,
     ...properties
   } = props;
-
+  
   const iconWithClass = instantiateComponent(icon, { className: classNames('icon', classes.icon) });
   const popperClass = parent === 'popover' && classes.popoverPopper;
   const tooltipClass = parent === 'popover' && classes.popoverTooltip;
@@ -250,7 +253,7 @@ const TooltipButton = (props, { intl }) => {
 };
 
 TooltipButton.propTypes = {
-  title: PropTypes.node,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   titleId: PropTypes.string,
   titleValues: PropTypes.object,
   label: PropTypes.node,
@@ -273,6 +276,9 @@ TooltipButton.propTypes = {
   children: PropTypes.node,
   cursor: PropTypes.string,
   TooltipProps: PropTypes.object,
+  
+  variant: PropTypes.oneOf(['contained', 'outlined', 'text']),
+  color: PropTypes.oneOf(['default', 'inherit', 'primary', 'secondary']),
 };
 
 TooltipButton.defaultProps = {
@@ -287,4 +293,6 @@ TooltipButton.contextTypes = {
 
 TooltipButton.displayName = 'TooltipButton';
 
-registerComponent('TooltipButton', TooltipButton, [withStyles, styles], withTheme);
+registerComponent('TooltipButton', TooltipButton, [withStyles, styles]);
+
+export default TooltipButton;
