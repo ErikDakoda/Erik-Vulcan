@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { registerComponent, instantiateComponent, Utils } from 'meteor/vulcan:core';
 import { intlShape } from 'meteor/vulcan:i18n';
+import { Link } from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import withTheme from '@material-ui/core/styles/withTheme';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -71,6 +72,31 @@ const styles = theme => ({
     height: 56,
   },
 
+  iconIcon: {
+    width: 24,
+    height: 24,
+  },
+
+  xsmallIcon: {
+    width: 24,
+    height: 24,
+  },
+
+  smallIcon: {
+    width: 24,
+    height: 24,
+  },
+
+  mediumIcon: {
+    width: 28,
+    height: 28,
+  },
+
+  largeIcon: {
+    width: 32,
+    height: 32,
+  },
+
   dangerButton: {
     ...theme.utils.dangerButton,
   },
@@ -107,6 +133,7 @@ const TooltipButton = (props, { intl }) => {
     labelId,
     placement,
     icon,
+    linkTo,
     loading,
     disabled,
     type,
@@ -125,7 +152,7 @@ const TooltipButton = (props, { intl }) => {
     ...properties
   } = props;
 
-  const iconWithClass = instantiateComponent(icon, { className: classNames('icon', classes.icon) });
+  const iconWithClass = instantiateComponent(icon, { className: classNames('icon', classes[`${size}Icon`]) });
   const popperClass = parent === 'popover' && classes.popoverPopper;
   const tooltipClass = parent === 'popover' && classes.popoverTooltip;
   const tooltipEnterDelay = typeof enterDelay === 'number' ? enterDelay : theme.utils.tooltipEnterDelay;
@@ -138,6 +165,7 @@ const TooltipButton = (props, { intl }) => {
   }
   const slug = Utils.slugify(titleId || labelId);
   const buttonWrapStyle = cursor ? { cursor: cursor } : null;
+  const LinkWrapper = linkTo ? Link : ({children}) => <>{children}</>;
 
   return (
     <span className={classNames('tooltip-button', classes.root, className)}>
@@ -180,7 +208,7 @@ const TooltipButton = (props, { intl }) => {
 
                 ?
 
-                <>
+                <LinkWrapper to={linkTo}>
                   <Fab className={classNames(classes.button, classes.fab, danger && classes.dangerButton, slug)}
                        {...properties}
                        size={size}
@@ -191,7 +219,7 @@ const TooltipButton = (props, { intl }) => {
                     {iconWithClass}
                   </Fab>
                   {loading && <CircularProgress size="auto" className={classes.progress}/>}
-                </>
+                </LinkWrapper>
 
                 :
 
@@ -201,7 +229,8 @@ const TooltipButton = (props, { intl }) => {
 
                   <Button className={classNames(classes.button, danger && classes.dangerButton, slug)}
                           {...properties}
-                          type={type}
+                          component={linkTo ? Link : type}
+                          to={linkTo}
                           size={size}
                           aria-label={title}
                           ref={buttonRef}
@@ -224,7 +253,7 @@ const TooltipButton = (props, { intl }) => {
 
                     ?
 
-                    <>
+                    <LinkWrapper to={linkTo}>
                       <IconButton
                         className={classNames(classes.button, danger && classes.dangerButton, classes[size], slug)}
                         {...properties}
@@ -235,7 +264,7 @@ const TooltipButton = (props, { intl }) => {
                         {iconWithClass}
                       </IconButton>
                       {loading && <CircularProgress size="auto" className={classes.progress}/>}
-                    </>
+                    </LinkWrapper>
 
                     :
 
@@ -257,10 +286,13 @@ TooltipButton.propTypes = {
   labelId: PropTypes.string,
   type: PropTypes.oneOf(['simple', 'fab', 'button', 'submit', 'icon', 'menu']),
   size: PropTypes.oneOf(['icon', 'xsmall', 'small', 'medium', 'large']),
+  variant: PropTypes.oneOf(['contained', 'outlined', 'text']),
+  color: PropTypes.oneOf(['default', 'inherit', 'primary', 'secondary']),
   danger: PropTypes.bool,
   placement: PropTypes.oneOf(['bottom-end', 'bottom-start', 'bottom',
     'left-end', 'left-start', 'left', 'right-end', 'right-start', 'right', 'top-end', 'top-start', 'top']),
   icon: PropTypes.node,
+  linkTo: PropTypes.string,
   loading: PropTypes.bool,
   disabled: PropTypes.bool,
   className: PropTypes.string,
@@ -273,8 +305,6 @@ TooltipButton.propTypes = {
   children: PropTypes.node,
   cursor: PropTypes.string,
   TooltipProps: PropTypes.object,
-  variant: PropTypes.oneOf(['contained', 'outlined', 'text']),
-  color: PropTypes.oneOf(['default', 'inherit', 'primary', 'secondary']),
 };
 
 TooltipButton.defaultProps = {
