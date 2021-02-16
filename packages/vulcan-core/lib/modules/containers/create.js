@@ -23,7 +23,6 @@ Arguments:
 Child Props:
 
   - createMovie({ data })
-  
 */
 
 import React from 'react';
