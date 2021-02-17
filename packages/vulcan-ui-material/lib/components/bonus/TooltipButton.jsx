@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import { registerComponent, instantiateComponent, Utils } from 'meteor/vulcan:core';
-import { intlShape } from 'meteor/vulcan:i18n';
-import { Link } from 'react-router-dom';
+import {registerComponent, instantiateComponent, Utils, debug} from 'meteor/vulcan:core';
+import {intlShape} from 'meteor/vulcan:i18n';
+import {Link} from 'react-router-dom';
 import withStyles from '@material-ui/core/styles/withStyles';
 import withTheme from '@material-ui/core/styles/withTheme';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -22,11 +22,25 @@ const styles = theme => ({
     display: 'contents',
   },
 
+  popper: {
+    transition: theme.transitions.create(['opacity'], {
+      duration: theme.transitions.duration.complex,
+    }),
+  },
+
   tooltip: {},
 
   buttonWrap: {
+    transition: theme.transitions.create(['opacity'], {
+      duration: theme.transitions.duration.complex,
+    }),
     position: 'relative',
     display: 'inline-flex',
+  },
+
+  hidden: {
+    pointerEvents: 'none',
+    opacity: 0,
   },
 
   button: {},
@@ -124,7 +138,7 @@ const styles = theme => ({
 
 });
 
-const TooltipButton = (props, { intl }) => {
+const TooltipButton = (props, {intl}) => {
   const {
     title,
     titleId,
@@ -136,6 +150,7 @@ const TooltipButton = (props, { intl }) => {
     linkTo,
     loading,
     disabled,
+    hidden,
     type,
     size,
     danger,
@@ -152,123 +167,134 @@ const TooltipButton = (props, { intl }) => {
     ...properties
   } = props;
 
-  const iconWithClass = instantiateComponent(icon, { className: classNames('icon', classes[`${size}Icon`]) });
-  const popperClass = parent === 'popover' && classes.popoverPopper;
-  const tooltipClass = parent === 'popover' && classes.popoverTooltip;
+  const popperRef = useRef(null);
+  const scheduleUpdate = () => {
+    if (popperRef.current) {
+      popperRef.current.scheduleUpdate();
+      debug('TooltipButton scheduled an update');
+    }
+  };
+
+  const iconWithClass = instantiateComponent(icon, {className: classNames('icon', classes[`${size}Icon`])});
+  const popperClass = classNames('popper', classes.popper, parent === 'popover' && classes.popoverPopper, hidden && classes.hidden);
+  const tooltipClass = classNames('tooltip', classes.tooltip, parent === 'popover' && classes.popoverTooltip);
+  const buttonWrapClass = classNames('button-wrap', classes.buttonWrap, hidden && classes.hidden);
+  const buttonWrapStyle = cursor ? {cursor: cursor} : null;
   const tooltipEnterDelay = typeof enterDelay === 'number' ? enterDelay : theme.utils.tooltipEnterDelay;
   const tooltipLeaveDelay = typeof leaveDelay === 'number' ? leaveDelay : theme.utils.tooltipLeaveDelay;
-  let titleText = title || (titleId ? intl.formatMessage({ id: titleId }, titleValues) : '');
-  let labelText = label || (labelId ? intl.formatMessage({ id: labelId }, titleValues) : '');
+  let titleText = title || (titleId ? intl.formatMessage({id: titleId}, titleValues) : '');
+  let labelText = label || (labelId ? intl.formatMessage({id: labelId}, titleValues) : '');
   if (type === 'button' || type === 'menu') {
     if (!labelText) labelText = titleText;
     if (titleText === labelText) titleText = '';
   }
   const slug = Utils.slugify(titleId || labelId);
-  const buttonWrapStyle = cursor ? { cursor: cursor } : null;
   const LinkWrapper = linkTo ? Link : ({children}) => <>{children}</>;
 
   return (
-    <span className={classNames('tooltip-button', classes.root, className)}>
+      <span className={classNames('tooltip-button', classes.root, className)}>
 
       <Tooltip id={`tooltip-${slug}`}
                title={titleText}
                placement={placement}
                arrow
+               interactive
                enterDelay={tooltipEnterDelay}
                leaveDelay={tooltipLeaveDelay}
                classes={{
-                 tooltip: classNames(classes.tooltip, tooltipClass),
+                 tooltip: tooltipClass,
                  popper: popperClass,
                }}
-               PopperProps={{
-                 ref: (popper) => { if (popper && popper.popper) popper.popper.scheduleUpdate(); },
-               }}
+               PopperProps={{popperRef}}
                {...TooltipProps}
       >
-        <span className={classes.buttonWrap} style={buttonWrapStyle}>
+        <span className={buttonWrapClass} style={buttonWrapStyle}>
           {
             type === 'menu'
 
-              ?
-
-              <MenuItem className={classNames(classes.menu, slug)}
-                        {...properties}
-                        button={true}
-                        disabled={loading || disabled}
-              >
-                <ListItemIcon>
-                  {icon}
-                </ListItemIcon>
-                <ListItemText primary={labelText}/>
-              </MenuItem>
-
-              :
-
-              type === 'fab' && !!icon
-
                 ?
 
-                <LinkWrapper to={linkTo}>
-                  <Fab className={classNames(classes.button, classes.fab, danger && classes.dangerButton, slug)}
-                       {...properties}
-                       size={size}
-                       aria-label={title}
-                       ref={buttonRef}
-                       disabled={loading || disabled}
-                  >
-                    {iconWithClass}
-                  </Fab>
-                  {loading && <CircularProgress size="auto" className={classes.progress}/>}
-                </LinkWrapper>
+                <MenuItem className={classNames(classes.menu, slug)}
+                          {...properties}
+                          button={true}
+                          disabled={loading || disabled}
+                >
+                  <ListItemIcon>
+                    {icon}
+                  </ListItemIcon>
+                  <ListItemText primary={labelText}/>
+                </MenuItem>
 
                 :
 
-                ['button', 'submit'].includes(type)
-
-                  ?
-
-                  <Button className={classNames(classes.button, danger && classes.dangerButton, slug)}
-                          {...properties}
-                          component={linkTo ? Link : type}
-                          to={linkTo}
-                          size={size}
-                          aria-label={title}
-                          ref={buttonRef}
-                          disabled={loading || disabled}
-                  >
-                    {
-                      iconWithClass &&
-
-                      <span className={classNames('icon-wrap', classes.iconWrap)}>
-                        {iconWithClass}
-                        {loading && <CircularProgress size="auto" className={classes.buttonProgress}/>}
-                      </span>
-                    }
-                    {labelText}
-                  </Button>
-
-                  :
-
-                  !!icon
+                type === 'fab' && !!icon
 
                     ?
 
                     <LinkWrapper to={linkTo}>
-                      <IconButton
-                        className={classNames(classes.button, danger && classes.dangerButton, classes[size], slug)}
-                        {...properties}
-                        aria-label={title}
-                        ref={buttonRef}
-                        disabled={(loading && !(disabled === false)) || disabled}
+                      <Fab
+                          className={classNames(classes.button, classes.fab, danger && classes.dangerButton, slug)}
+                          {...properties}
+                          size={size}
+                          aria-label={title}
+                          ref={buttonRef}
+                          disabled={loading || disabled}
                       >
                         {iconWithClass}
-                      </IconButton>
-                      {loading && <CircularProgress size="auto" className={classes.progress}/>}
+                      </Fab>
+                      {loading && <CircularProgress size="auto"
+                                                    className={classes.progress}/>}
                     </LinkWrapper>
 
                     :
 
-                    children
+                    ['button', 'submit'].includes(type)
+
+                        ?
+
+                        <Button
+                            className={classNames(classes.button, danger && classes.dangerButton, slug)}
+                            {...properties}
+                            component={linkTo ? Link : type}
+                            to={linkTo}
+                            size={size}
+                            aria-label={title}
+                            ref={buttonRef}
+                            disabled={loading || disabled}
+                        >
+                          {
+                            iconWithClass &&
+
+                            <span className={classNames('icon-wrap', classes.iconWrap)}>
+                              {iconWithClass}
+                              {loading && <CircularProgress size="auto" className={classes.buttonProgress}/>}
+                            </span>
+                          }
+                          {labelText}
+                        </Button>
+
+                        :
+
+                        !!icon
+
+                            ?
+
+                            <LinkWrapper to={linkTo}>
+                              <IconButton
+                                  className={classNames(classes.button, danger && classes.dangerButton, classes[size], slug)}
+                                  {...properties}
+                                  aria-label={title}
+                                  ref={buttonRef}
+                                  disabled={(loading && !(disabled === false)) || disabled}
+                              >
+                                {iconWithClass}
+                              </IconButton>
+                              {loading && <CircularProgress size="auto" className={classes.progress}/>}
+                            </LinkWrapper>
+
+                            :
+
+                            children
           }
         </span>
       </Tooltip>
@@ -295,6 +321,7 @@ TooltipButton.propTypes = {
   linkTo: PropTypes.string,
   loading: PropTypes.bool,
   disabled: PropTypes.bool,
+  hidden: PropTypes.bool,
   className: PropTypes.string,
   classes: PropTypes.object,
   buttonRef: PropTypes.func,
