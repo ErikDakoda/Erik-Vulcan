@@ -125,33 +125,3 @@ export const registerCustomDefaultFragment = function ({
 
   if (defaultFragment) registerFragment(defaultFragment);
 };
-
-
-/**
- * Generates and registers a default fragment for a typeName registered using `registerCustomQuery()`
- * @param {string} typeName The GraphQL Type registered using `registerCustomQuery()`
- * @param {Object|SimpleSchema} [schema] Schema definition object to convert to a fragment
- * @param {String} [fragmentName] The fragment's name; if omitted `${typeName}DefaultFragment` will be used
- * @param {[String]} [defaultCanRead] Fields in the schema without `canRead` will be assigned these read permissions
- * @param {Object} options Options sent to `getObjectFragment()`
- */
-export const registerCustomDefaultFragment = function ({
-                                                         typeName,
-                                                         schema,
-                                                         fragmentName,
-                                                         defaultCanRead,
-                                                         options = { onlyViewable: true },
-                                                       }) {
-  const simpleSchema = createSchema(schema, undefined, undefined, defaultCanRead);
-  schema = simpleSchema._schema;
-
-  fragmentName = fragmentName || `${typeName}DefaultFragment`;
-
-  const defaultFragment = getObjectFragment({
-    schema,
-    fragmentName: `fragment ${fragmentName} on ${typeName}`,
-    options,
-  });
-
-  if (defaultFragment) registerFragment(defaultFragment);
-};
