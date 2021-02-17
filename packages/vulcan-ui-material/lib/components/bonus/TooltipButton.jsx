@@ -86,31 +86,6 @@ const styles = theme => ({
     height: 56,
   },
 
-  iconIcon: {
-    width: 24,
-    height: 24,
-  },
-
-  xsmallIcon: {
-    width: 24,
-    height: 24,
-  },
-
-  smallIcon: {
-    width: 24,
-    height: 24,
-  },
-
-  mediumIcon: {
-    width: 28,
-    height: 28,
-  },
-
-  largeIcon: {
-    width: 32,
-    height: 32,
-  },
-
   dangerButton: {
     ...theme.utils.dangerButton,
   },
@@ -175,11 +150,12 @@ const TooltipButton = (props, {intl}) => {
     }
   };
 
-  const iconWithClass = instantiateComponent(icon, {className: classNames('icon', classes[`${size}Icon`])});
+  const iconWithClass = instantiateComponent(icon, {className: classNames('icon', classes.icon)});
   const popperClass = classNames('popper', classes.popper, parent === 'popover' && classes.popoverPopper, hidden && classes.hidden);
   const tooltipClass = classNames('tooltip', classes.tooltip, parent === 'popover' && classes.popoverTooltip);
   const buttonWrapClass = classNames('button-wrap', classes.buttonWrap, hidden && classes.hidden);
   const buttonWrapStyle = cursor ? {cursor: cursor} : null;
+
   const tooltipEnterDelay = typeof enterDelay === 'number' ? enterDelay : theme.utils.tooltipEnterDelay;
   const tooltipLeaveDelay = typeof leaveDelay === 'number' ? leaveDelay : theme.utils.tooltipLeaveDelay;
   let titleText = title || (titleId ? intl.formatMessage({id: titleId}, titleValues) : '');
