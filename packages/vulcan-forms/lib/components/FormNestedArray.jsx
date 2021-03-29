@@ -75,12 +75,13 @@ class FormNestedArray extends PureComponent {
       this.props,
       'value',
       'input',
+      'help',
       'inputProperties',
       'nestedInput',
       'beforeComponent',
       'afterComponent'
     );
-    const { errors, path, formComponents, minCount, maxCount, arrayField } = this.props;
+    const { errors, path, formComponents, minCount, maxCount, arrayField, help } = this.props;
     const FormComponents = formComponents;
 
     //filter out null values to calculate array length
@@ -94,7 +95,7 @@ class FormNestedArray extends PureComponent {
     properties.hasErrors = !!(properties.nestedArrayErrors && properties.nestedArrayErrors.length);
 
     return (
-      <FormComponents.FormNestedArrayLayout {...properties}>
+      <FormComponents.FormNestedArrayLayout {...properties} help={help}>
         {value.map((subDocument, i) => {
           if (this.isDeleted(i)) return null;
           const path = `${this.props.path}.${i}`;

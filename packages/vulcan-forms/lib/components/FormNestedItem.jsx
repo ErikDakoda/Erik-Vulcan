@@ -40,6 +40,7 @@ const FormNestedItem = (
             key={i}
             {...props}
             {...field}
+            formComponents={formComponents}
             path={`${path}.${field.name}`}
             itemIndex={itemIndex}
           />
