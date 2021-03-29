@@ -170,44 +170,4 @@ describe('vulcan:lib/reactive-state', function () {
 
   });
 
-  /*describe('useReactiveState()', function () {
-
-    it('returns props including the ReactiveState and functions to set and update it', function () {
-      objectState(null); // reset
-
-      const { testState } = useReactiveState({ stateKey });
-
-      expect(typeof testState).toEqual('function');
-      expect(testState.stateKey).toEqual(stateKey);
-      expect(testState.schema._schemaKeys).toEqual(schemaKeys);
-      expect(testState.defaultValue).toMatchObject(defaultObject);
-      expect(testState()).toMatchObject(defaultObject);
-    });
-
-    it('returns props with custom names when the propName option is passed', function () {
-      const { MyState } = useReactiveState({ stateKey, propName: 'MyState' });
-
-      expect(typeof MyState).toEqual('function');
-      expect(MyState.stateKey).toEqual(stateKey);
-      expect(MyState.schema._schemaKeys).toEqual(schemaKeys);
-      expect(MyState.defaultValue).toMatchObject(defaultObject);
-      expect(MyState()).toMatchObject(defaultObject);
-    });
-
-    it('returns a function that allows setting the state', function () {
-      const { MyState } = useReactiveState({ stateKey, propName: 'MyState' });
-
-      const object2 = {
-        stringField: 'Two',
-        numField: 2,
-      }
-
-      MyState(object2)
-      const receivedValue = MyState();
-
-      expect(receivedValue).toEqual(object2);
-    });
-
-  });*/
-
 });

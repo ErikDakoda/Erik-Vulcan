@@ -116,6 +116,7 @@ input Float_Array_Selector {
 input Boolean_Selector {
   _eq: Boolean
   _neq: Boolean
+  _is_null: Boolean
 }
 
 input Boolean_Array_Selector {
@@ -137,6 +138,15 @@ input Date_Selector {
 input Date_Array_Selector {
   _contains: Date_Selector
   _contains_all: [Date_Selector]
+}
+
+input JSON_Selector {
+  _is_null: Boolean
+}
+
+input JSON_Array_Selector {
+  _contains: JSON_Selector
+  _contains_all: [JSON_Selector]
 }
 
 # column ordering options

@@ -2,7 +2,7 @@ import { convertToGraphQL } from './types.js';
 import { Utils } from '../utils.js';
 
 // field types that support filtering
-const supportedFieldTypes = ['String', 'Int', 'Float', 'Boolean', 'Date'];
+const supportedFieldTypes = ['String', 'Int', 'Float', 'Boolean', 'Date', 'JSON'];
 const getContentType = type =>
   type
     .replace('[', '')
@@ -57,7 +57,7 @@ const formatFilterName = s => Utils.capitalize(s.replace('_', ''));
 /*
 
 See https://docs.hasura.io/1.0/graphql/manual/queries/query-filters.html#
- 
+
 */
 export const filterInputType = typeName => `${typeName}FilterInput`;
 export const fieldFilterInputTemplate = ({ typeName, fields, customFilters = [], customSorts = [] }) =>
