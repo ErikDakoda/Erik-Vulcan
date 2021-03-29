@@ -25,6 +25,9 @@ export const additionalFieldKeys = [
   'group', // form fieldset group
   'arrayItem', // properties for array items
 
+  'cardComponent', // Card component (String or React component)
+  'cardComponentProps', // Props to pass to card component
+
   'onCreate', // field insert callback
   'onInsert', // field insert callback (OpenCRUD backwards compatibility)
 
@@ -61,7 +64,7 @@ export const additionalFieldKeys = [
 
   'apiOnly', // field should not be inserted in database
   'relation', // define a relation to another model
-  
+
   'intl', // set to `true` to make a field international
   'isIntlData', // marker for the actual schema fields that hold intl strings
   'intlId', // set an explicit i18n key for a field

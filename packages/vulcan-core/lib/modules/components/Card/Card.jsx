@@ -25,13 +25,14 @@ const getLabel = (field, fieldName, collection, intl) => {
 
 // Main component
 
-const CardItem = ({ label, value, typeName, Components, fieldName, collection }) => (
+const CardItem = ({ document, label, value, typeName, Components, fieldName, collection }) => (
   <tr>
     <td className="datacard-label">
       <strong>{label}</strong>
     </td>
     <td className="datacard-value">
       <Components.CardItemSwitcher
+        document={document}
         value={value}
         typeName={typeName}
         Components={Components}

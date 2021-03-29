@@ -1,4 +1,4 @@
-import { getCollectionByTypeName, registerComponent } from 'meteor/vulcan:lib';
+import { getCollectionByTypeName, registerComponent, instantiateComponent } from 'meteor/vulcan:lib';
 import React from 'react';
 
 const getTypeName = (value, fieldName, collection) => {
@@ -45,6 +45,10 @@ const CardItemSwitcher = props => {
   // JSX element
   if (React.isValidElement(value)) {
     return value;
+  }
+
+  if (fieldSchema && fieldSchema.cardComponent) {
+    return instantiateComponent(fieldSchema.cardComponent, { ...itemProps, ...fieldSchema.cardComponentProps });
   }
 
   // Relation

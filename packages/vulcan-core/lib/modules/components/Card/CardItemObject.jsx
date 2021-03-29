@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import without from 'lodash/without';
 
 // Object
-const CardItemObject = ({ value: object, Components }) => {
+const CardItemObject = ({ value: object, Components, ...rest }) => {
   if (object.__typename === 'User') {
     const user = object;
 
@@ -24,7 +24,7 @@ const CardItemObject = ({ value: object, Components }) => {
                 <strong>{key}</strong>
               </td>
               <td>
-                <Components.CardItemSwitcher value={object[key]} typeName={typeof object[key]} Components={Components} />
+                <Components.CardItemSwitcher value={object[key]} typeName={typeof object[key]} Components={Components} {...rest} />
               </td>
             </tr>
           ))}

@@ -206,6 +206,8 @@ export const copyHoCs = (sourceComponent, targetComponent) => {
 export const instantiateComponent = (component, props) => {
   if (!component) {
     return null;
+  } else if (Array.isArray(component)) {
+    return component.map((c, key) => instantiateComponent(c, { ...props, key }));
   } else if (typeof component === 'string') {
     const Component = Components[component];
     return <Component {...props} />;
@@ -218,8 +220,9 @@ export const instantiateComponent = (component, props) => {
     const Component = component;
     return <Component {...props} />;
   } else if (typeof component === 'function') {
-    return component(props);
-  } else if (typeof component === 'object' && component.$$typeof && component.render) {
+    const Component = component;
+    return <Component {...props} />;
+  } else if (typeof component === 'object' && component.render) {
     const Component = component;
     return <Component {...props} />;
   } else {
