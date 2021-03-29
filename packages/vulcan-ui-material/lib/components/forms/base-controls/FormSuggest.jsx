@@ -10,8 +10,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';
-import { registerComponent } from 'meteor/vulcan:core';
-import StartAdornment, { hideStartAdornment } from './StartAdornment';
+import {registerComponent} from 'meteor/vulcan:core';
+import StartAdornment, {hideStartAdornment} from './StartAdornment';
 import EndAdornment from './EndAdornment';
 import FormControlLayout from './FormControlLayout';
 import FormHelper from './FormHelper';
@@ -72,7 +72,7 @@ export const styles = theme => {
       '&::-webkit-search-decoration, &::-webkit-search-cancel-button, &::after, &:after': {
         display: 'none',
       },
-      '&::-webkit-search-results, &::-webkit-search-results-decoration': { display: 'none' },
+      '&::-webkit-search-results, &::-webkit-search-results-decoration': {display: 'none'},
     },
 
     inputPlaceholder: {
@@ -121,15 +121,25 @@ export const styles = theme => {
     },
 
     inputRoot: {
-      '&:hover .clear-button.has-value': { opacity: 0.54, pointerEvents: 'initial' },
-      '&:focus .clear-button.has-value': { opacity: 0.54, pointerEvents: 'initial' },
-      '&:hover .menu-indicator.has-value': { opacity: 0 },
-      '&:focus .menu-indicator.has-value': { opacity: 0 },
+      '&:hover .clear-button.has-value': {
+        opacity: 0.54,
+        pointerEvents: 'initial',
+      },
+      '&:focus .clear-button.has-value': {
+        opacity: 0.54,
+        pointerEvents: 'initial',
+      },
+      '&:hover .menu-indicator.has-value': {
+        opacity: 0,
+      },
+      '&:focus .menu-indicator.has-value': {
+        opacity: 0,
+      },
     },
 
     inputFocused: {
-      '& .clear-button.has-value': { opacity: 0.54, pointerEvents: 'initial' },
-      '& .menu-indicator.has-value': { opacity: 0 },
+      '& .clear-button.has-value': {opacity: 0.54, pointerEvents: 'initial'},
+      '& .menu-indicator.has-value': {opacity: 0},
     },
 
     inputDisabled: {},
@@ -238,21 +248,21 @@ export const styles = theme => {
   };
 };
 
+export const suggestOptionShape = PropTypes.shape({
+  label: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  iconComponent: PropTypes.node,
+  formatted: PropTypes.oneOfType([PropTypes.node, PropTypes.elementType]),
+  onClick: PropTypes.func,
+});
+
 const FormSuggest = createReactClass({
   inputElement: null,
 
   mixins: [ComponentMixin],
 
   propTypes: {
-    options: PropTypes.arrayOf(
-      PropTypes.shape({
-        label: PropTypes.string,
-        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        iconComponent: PropTypes.node,
-        formatted: PropTypes.oneOfType([PropTypes.node, PropTypes.elementType]),
-        onClick: PropTypes.func,
-      }),
-    ),
+    options: PropTypes.arrayOf(suggestOptionShape),
     classes: PropTypes.object.isRequired,
     limitToList: PropTypes.bool,
     disableText: PropTypes.bool,
@@ -264,7 +274,7 @@ const FormSuggest = createReactClass({
     showMenuIndicator: PropTypes.bool,
   },
 
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
       autoComplete: 'off',
       autoFocus: false,
@@ -272,20 +282,20 @@ const FormSuggest = createReactClass({
     };
   },
 
-  getOptionFormatted: function(option, formattedProps) {
+  getOptionFormatted: function (option, formattedProps) {
     if (!option) return;
     const formatted =
-      option.formatted && typeof option.formatted === 'function'
-        ? option.formatted(formattedProps)
-        : option.formatted;
+        option.formatted && typeof option.formatted === 'function'
+            ? option.formatted(formattedProps)
+            : option.formatted;
     return formatted;
   },
 
-  getOptionLabel: function(option) {
+  getOptionLabel: function (option) {
     return option && option.label || option && option.value || '';
   },
 
-  getInitialState: function() {
+  getInitialState: function () {
     if (this.props.refFunction) {
       this.props.refFunction(this);
     }
@@ -297,9 +307,16 @@ const FormSuggest = createReactClass({
     };
   },
 
+  componentDidMount: function () {
+    setTimeout(() => {
+      console.log('forced update');
+      this.forceUpdate();
+    }, 2000);
+  },
+
   UNSAFE_componentWillReceiveProps: function (nextProps) {
     if (nextProps.value !== this.props.value ||
-      nextProps.options !== this.props.options) {
+        nextProps.options !== this.props.options) {
       const inputValue = this.getInputValue(nextProps);
       this.setState({
         inputValue,
@@ -309,37 +326,39 @@ const FormSuggest = createReactClass({
 
   shouldComponentUpdate: function (nextProps, nextState) {
     const shouldUpdate = !_isEqual(nextState, this.state) ||
-      nextProps.disabled !== this.props.disabled ||
-      nextProps.help !== this.props.help ||
-      nextProps.charsCount !== this.props.charsCount ||
-      !_isEqual(nextProps.errors, this.props.errors) ||
-      nextProps.options !== this.props.options;
+        nextProps.disabled !== this.props.disabled ||
+        nextProps.help !== this.props.help ||
+        nextProps.charsCount !== this.props.charsCount ||
+        !_isEqual(nextProps.errors, this.props.errors) ||
+        nextProps.options !== this.props.options;
     return shouldUpdate;
   },
 
   getInputValue: function (props) {
     const selectedOption = this.getSelectedOption(props);
     const inputValue = selectedOption ?
-      this.getOptionLabel(selectedOption) :
-      props.limitToList ?
-        '' :
-        props.value;
+        this.getOptionLabel(selectedOption) :
+        props.limitToList ?
+            '' :
+            props.value;
     return inputValue;
   },
 
-  getSelectedOption: function(props) {
+  getSelectedOption: function (props) {
     props = props || this.props;
     const selectedOption = props.options && props.options.find(opt => opt.value === props.value);
     return selectedOption;
   },
 
-  handleFocus: function(event) {
+  handleFocus: function (event) {
     if (!this.inputElement) return;
 
-    this.inputElement.select();
+    if (!this.props.disableText) {
+      this.inputElement.select();
+    }
   },
 
-  handleBlur: function(event, { highlightedSuggestion: suggestion }) {
+  handleBlur: function (event, {highlightedSuggestion: suggestion}) {
     if (!this.props.disableSelectOnBlur) {
       const selectedOption = this.getSelectedOption();
       if (!selectedOption) return;
@@ -352,7 +371,7 @@ const FormSuggest = createReactClass({
     }
   },
 
-  highlightFirstSuggestion: function() {
+  highlightFirstSuggestion: function () {
     if (this.props.disableText) return false;
 
     const selectedOption = this.getSelectedOption();
@@ -360,16 +379,16 @@ const FormSuggest = createReactClass({
     return selectedOption.label !== this.state.inputValue;
   },
 
-  suggestionSelected: function(event, { suggestion }) {
+  suggestionSelected: function (event, {suggestion}) {
     event.preventDefault();
     this.changeValue(suggestion);
   },
 
-  changeValue: function(suggestion) {
+  changeValue: function (suggestion) {
     if (!suggestion) {
       suggestion = this.props.limitToList || suggestion === null ?
-        { label: '', value: null } :
-        { label: this.state.inputValue, value: this.state.inputValue };
+          {label: '', value: null} :
+          {label: this.state.inputValue, value: this.state.inputValue};
     }
     if (suggestion.onClick) {
       return;
@@ -380,32 +399,32 @@ const FormSuggest = createReactClass({
     this.props.handleChange(suggestion.value);
   },
 
-  handleInputChange: function(event) {
+  handleInputChange: function (event) {
     const value = event.target.value;
     this.setState({
       inputValue: value,
     });
   },
 
-  handleSuggestionsFetchRequested: function({ value, reason }) {
+  handleSuggestionsFetchRequested: function ({value, reason}) {
     this.setState({
       suggestions: this.getSuggestions(value),
     });
   },
 
-  handleSuggestionsClearRequested: function() {
+  handleSuggestionsClearRequested: function () {
     this.setState({
       suggestions: [],
     });
   },
 
-  shouldRenderSuggestions: function(value) {
+  shouldRenderSuggestions: function (value) {
     return true;
   },
 
   render: function () {
-    const { value, disabled, classes } = this.props;
-    const { inputValue } = this.state;
+    const {value, disabled, classes} = this.props;
+    const {inputValue} = this.state;
     const selectedOption = this.getSelectedOption();
     const inputFormatted = this.getOptionFormatted(selectedOption, {
       current: true,
@@ -413,16 +432,17 @@ const FormSuggest = createReactClass({
     });
 
     const startAdornment = hideStartAdornment(this.props) ? null :
-      <StartAdornment {...this.props}
-                      value={value}
-                      classes={null}
-      />;
+        <StartAdornment {...this.props}
+                        value={value}
+                        classes={null}
+        />;
     const endAdornment =
-      <EndAdornment {...this.props}
-                    value={value}
-                    classes={{ inputAdornment: classes.inputAdornment }}
-                    changeValue={this.changeValue}
-      />;
+        <EndAdornment {...this.props}
+                      hideClear={!this.props.optional}
+                      value={value}
+                      classes={{inputAdornment: classes.inputAdornment}}
+                      changeValue={this.changeValue}
+        />;
 
     const element = this.renderElement(startAdornment, endAdornment);
 
@@ -431,68 +451,75 @@ const FormSuggest = createReactClass({
     }
 
     return (
-      <FormControlLayout
-        {...this.getFormControlProperties()}
-        shrinkLabel={inputFormatted && inputFormatted !== inputValue}
-        htmlFor={this.getId()}>
-        {element}
-        <FormHelper {...this.getFormHelperProperties()} />
-      </FormControlLayout>
+        <FormControlLayout
+            {...this.getFormControlProperties()}
+            shrinkLabel={inputFormatted && inputFormatted !== inputValue}
+            htmlFor={this.getId()}>
+          {element}
+          <FormHelper {...this.getFormHelperProperties()} />
+        </FormControlLayout>
     );
   },
 
-  renderElement: function(startAdornment, endAdornment) {
-    const { classes, autoFocus, disableText, placeholder, inputProperties, disabled } = this.props;
-    const { inputValue } = this.state;
+  renderElement: function (startAdornment, endAdornment) {
+    const {
+      classes,
+      autoFocus,
+      disableText,
+      placeholder,
+      inputProperties,
+      disabled
+    } = this.props;
+    const {inputValue} = this.state;
     const selectedOption = this.getSelectedOption();
     const inputFormatted = this.getOptionFormatted(selectedOption, {
       current: true,
       disabled,
     });
     return (
-      <Autosuggest
-        theme={{
-          container: classes.container,
-          input: classNames(classes.input, disableText && classes.readOnly),
-          suggestionsContainer: classes.suggestionsContainer,
-          suggestionsContainerOpen: classes.suggestionsContainerOpen,
-          suggestion: classes.suggestion,
-          suggestionsList: classes.suggestionsList,
-        }}
-        highlightFirstSuggestion={this.highlightFirstSuggestion()}
-        renderInputComponent={this.renderInputComponent}
-        suggestions={this.state.suggestions}
-        onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
-        onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
-        renderSuggestionsContainer={this.renderSuggestionsContainer}
-        shouldRenderSuggestions={this.shouldRenderSuggestions}
-        focusInputOnSuggestionClick={false}
-        alwaysRenderSuggestions={false}
-        getSuggestionValue={this.getSuggestionValue}
-        renderSuggestion={this.renderSuggestion}
-        onSuggestionSelected={this.suggestionSelected}
-        inputProps={{
-          ...this.cleanProps(inputProperties),
-          autoFocus,
-          classes,
-          onChange: this.handleInputChange,
-          onFocus: this.handleFocus,
-          onBlur: this.handleBlur,
-          value: inputValue,
-          formatted: inputFormatted,
-          placeholder: placeholder,
-          readOnly: disableText,
-          disabled: this.props.disabled,
-          name: this.props.name,
-          'aria-haspopup': 'true',
-          startAdornment,
-          endAdornment,
-        }}
-      />
+        <Autosuggest
+            theme={{
+              container: classes.container,
+              input: classNames(classes.input, disableText && classes.readOnly),
+              suggestionsContainer: classes.suggestionsContainer,
+              suggestionsContainerOpen: classes.suggestionsContainerOpen,
+              suggestion: classes.suggestion,
+              suggestionsList: classes.suggestionsList,
+            }}
+            highlightFirstSuggestion={this.highlightFirstSuggestion()}
+            renderInputComponent={this.renderInputComponent}
+            suggestions={this.state.suggestions}
+            onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
+            onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
+            renderSuggestionsContainer={this.renderSuggestionsContainer}
+            shouldRenderSuggestions={this.shouldRenderSuggestions}
+            focusInputOnSuggestionClick={false}
+            alwaysRenderSuggestions={false}
+            getSuggestionValue={this.getSuggestionValue}
+            renderSuggestion={this.renderSuggestion}
+            onSuggestionSelected={this.suggestionSelected}
+            inputProps={{
+              ...this.cleanProps(inputProperties),
+              autoFocus,
+              classes,
+              onChange: this.handleInputChange,
+              onFocus: this.handleFocus,
+              onBlur: this.handleBlur,
+              value: inputValue,
+              formatted: inputFormatted,
+              placeholder: placeholder,
+              readOnly: disableText,
+              disabled: this.props.disabled,
+              name: this.props.name,
+              'aria-haspopup': 'true',
+              startAdornment,
+              endAdornment,
+            }}
+        />
     );
   },
 
-  renderInputComponent: function(inputProps) {
+  renderInputComponent: function (inputProps) {
     const {
       classes,
       autoFocus,
@@ -506,60 +533,61 @@ const FormSuggest = createReactClass({
       errors,
       ...rest
     } = inputProps;
-    const { hideLabel, inputRef } = this.props;
+    const {hideLabel, inputRef} = this.props;
 
     if (formatted && formatted !== value) {
       return (
-        <div
-          aria-readonly={disabled}
-          {...rest}
-          tabIndex={0}
-          className={classNames(
-            classes.inputRoot,
-            classes.underline,
-            disabled && classes.disabled,
-            errors?.length && classes.error,
-            classes.formatted,
-            hideLabel && classes.formattedNoLabel,
-          )}>
-          {startAdornment}
-          {formatted}
-          {endAdornment}
-        </div>
+          <div
+              aria-readonly={disabled}
+              {...rest}
+              tabIndex={0}
+              className={classNames(
+                  classes.inputRoot,
+                  classes.underline,
+                  disabled && classes.disabled,
+                  errors?.length && classes.error,
+                  classes.formatted,
+                  hideLabel && classes.formattedNoLabel,
+              )}>
+            {startAdornment}
+            {formatted}
+            {endAdornment}
+          </div>
       );
     }
 
     return (
-      <Input
-        autoFocus={autoFocus}
-        autoComplete={autoComplete}
-        className={classes.textField}
-        classes={{
-          root: classes.inputRoot,
-          underline: classes.underline,
-          focused: classes.inputFocused,
-        }}
-        value={value}
-        inputRef={c => {
-          ref(c);
-          if (inputRef) {
-            inputRef(c);
-          }
-          this.inputElement = c;
-        }}
-        type="text"
-        startAdornment={startAdornment}
-        endAdornment={endAdornment}
-        disabled={disabled}
-        inputProps={{
-          ...rest,
-        }}
-      />
+        <Input
+            id={this.getId()}
+            autoFocus={autoFocus}
+            autoComplete={autoComplete}
+            className={classes.textField}
+            classes={{
+              root: classes.inputRoot,
+              underline: classes.underline,
+              focused: classes.inputFocused,
+            }}
+            value={value}
+            inputRef={c => {
+              ref(c);
+              if (inputRef) {
+                inputRef(c);
+              }
+              this.inputElement = c;
+            }}
+            type="text"
+            startAdornment={startAdornment}
+            endAdornment={endAdornment}
+            disabled={disabled}
+            inputProps={{
+              ...rest,
+            }}
+        />
     );
   },
 
-  renderSuggestion: function (suggestion, { query, isHighlighted }) {
-    const { classes } = this.props;
+  renderSuggestion: function (suggestion, {query, isHighlighted}) {
+    const {classes} = this.props;
     const formatted = this.getOptionFormatted(suggestion, {
       disabled: this.props.disabled,
       selected: isHighlighted,
@@ -570,75 +598,78 @@ const FormSuggest = createReactClass({
     const matches = match(label, query);
     const parts = parse(label, matches);
     const primary = this.props.disableMatchParts
-      ?
-      label
-      :
-      parts.map((part, index) => {
-        return part.highlight
-          ?
-          <span key={index} className={classes.menuItemHighlight}>{part.text}</span>
-          :
-          <span key={index}>{part.text}</span>;
-      });
+        ?
+        label
+        :
+        parts.map((part, index) => {
+          return part.highlight
+              ?
+              <span key={index}
+                    className={classes.menuItemHighlight}>{part.text}</span>
+              :
+              <span key={index}>{part.text}</span>;
+        });
     const isCurrent = suggestion.value === this.props.value;
     const className = classNames(classes.menuItem, isCurrent && classes.current);
     return (
-      <MenuItem selected={isHighlighted}
-                component="div"
-                className={className}
-                onClick={suggestion.onClick}
-                data-value={suggestion.value}
-      >
-        {
-          suggestion.iconComponent &&
-          <ListItemIcon classes={{ root: classes.menuItemIcon }}>{suggestion.iconComponent}</ListItemIcon>
-        }
-        <div>
-          {primary}
-        </div>
-      </MenuItem>
+        <MenuItem selected={isHighlighted}
+                  component="div"
+                  className={className}
+                  onClick={suggestion.onClick}
+                  data-value={suggestion.value}
+        >
+          {
+            suggestion.iconComponent &&
+            <ListItemIcon
+                classes={{root: classes.menuItemIcon}}>{suggestion.iconComponent}</ListItemIcon>
+          }
+          <div>
+            {primary}
+          </div>
+        </MenuItem>
     );
   },
 
-  renderSuggestionsContainer: function({ containerProps, children }) {
-    const { classes } = this.props;
+  renderSuggestionsContainer: function ({containerProps, children}) {
+    const {classes} = this.props;
 
     return (
-      <Paper {...containerProps} id={`menu-${this.props.name}`} square>
-        <IsolatedScroll className={classes.scroller}>{children}</IsolatedScroll>
-      </Paper>
+        <Paper {...containerProps} id={`menu-${this.props.name}`} square>
+          <IsolatedScroll
+              className={classes.scroller}>{children}</IsolatedScroll>
+        </Paper>
     );
   },
 
-  getSuggestionValue: function(suggestion) {
+  getSuggestionValue: function (suggestion) {
     return suggestion.value;
   },
 
-  getSuggestions: function(value) {
+  getSuggestions: function (value) {
     const inputValue = value.trim().toLowerCase();
     const inputLength = inputValue.length;
     let count = 0;
     const inputMatchesSelection = value === this.getOptionLabel(this.getSelectedOption());
 
     return (this.props.disableText || this.props.showAllOptions) && inputMatchesSelection
-      ? this.props.options.filter(suggestion => {
-        return true;
-      })
-      : inputLength === 0
         ? this.props.options.filter(suggestion => {
-          count++;
-          return count <= maxSuggestions;
+          return true;
         })
-        : this.props.options.filter(suggestion => {
-          const label = this.getOptionLabel(suggestion);
-          const keep = count < maxSuggestions && label.toLowerCase().includes(inputValue);
+        : inputLength === 0
+            ? this.props.options.filter(suggestion => {
+              count++;
+              return count <= maxSuggestions;
+            })
+            : this.props.options.filter(suggestion => {
+              const label = this.getOptionLabel(suggestion);
+              const keep = count < maxSuggestions && label.toLowerCase().includes(inputValue);
 
-          if (keep) {
-            count++;
-          }
+              if (keep) {
+                count++;
+              }
 
-          return keep;
-        });
+              return keep;
+            });
   },
 
 });

@@ -16,6 +16,7 @@ export const styles = theme => ({
   inputAdornment: {
     whiteSpace: 'nowrap',
     marginTop: '0 !important',
+    height: 'auto',
     '& > *': {
       verticalAlign: 'bottom',
     },
@@ -25,13 +26,15 @@ export const styles = theme => ({
     '& > * + *': {
       marginLeft: 8,
     },
-    height: 'auto',
+    '& $menuIndicator + $clearButton': {
+      marginLeft: -32,
+    }
   },
 
   menuIndicator: {
     padding: 10,
-    marginRight: -40,
-    marginLeft: -16,
+    marginRight: -12,
+    marginLeft: -12,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -73,7 +76,7 @@ const EndAdornment = (props, context) => {
   const { classes, value, addonAfter, changeValue, showMenuIndicator, hideClear, disabled } = props;
   const { intl } = context;
 
-  if (!addonAfter && (!changeValue || hideClear || disabled)) return null;
+  if (!addonAfter && !showMenuIndicator && (!changeValue || hideClear || disabled)) return null;
   const hasValue = !!value || value === 0;
 
   const clearButton = changeValue && !hideClear && !disabled &&
@@ -93,7 +96,7 @@ const EndAdornment = (props, context) => {
     </IconButton>;
 
   const menuIndicator = showMenuIndicator && !disabled &&
-    <div className={classNames('menu-indicator', classes.menuIndicator, hasValue && 'has-value')}>
+    <div className={classNames('menu-indicator', classes.menuIndicator, hasValue && clearButton && 'has-value')}>
       <MenuDownIcon/>
     </div>;
 

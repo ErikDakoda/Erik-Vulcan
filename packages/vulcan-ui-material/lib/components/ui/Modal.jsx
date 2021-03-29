@@ -17,7 +17,7 @@ const styles = theme => ({
 
   dialogTitleEmpty: {
     padding: 0,
-    height: theme.spacing(3),
+    height: 0,
     borderBottomStyle: 'none',
   },
 

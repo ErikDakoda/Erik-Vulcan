@@ -1,31 +1,31 @@
-/**
- * @Author: Apollinaire Lecocq <apollinaire>
- * @Date:   09-01-19
- * @Last modified by:   apollinaire
- * @Last modified time: 10-01-19
- */
 import React from 'react';
-import withStyles from '@material-ui/core/styles/withStyles';
+import PropTypes from 'prop-types';
 import { registerComponent } from 'meteor/vulcan:core';
+import MuiAlert from '@material-ui/lab/Alert';
 
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
+const Alert = React.forwardRef((props, ref) => {
+  const { children, variant = 'error', ...rest } = props;
+  const severity = ['error', 'danger'].includes(variant) ? 'error' :
+    ['primary', 'secondary', 'info', 'light', 'dark'].includes(variant) ? 'info' :
+      variant; // 'success' or 'warning'
 
-const AlertStyle = theme => ({
-  error: {
-    color: theme.palette.error.main,
-    backgroundColor: theme.palette.error[100],
-    fontFamily: theme.typography.fontFamily,
-  },
-  other: {
-    fontFamily: theme.typography.fontFamily,
-  },
+  return (
+    <MuiAlert
+      ref={ref}
+      severity={severity}
+      variant="standard"
+      {...rest}
+    >
+      {children}
+    </MuiAlert>
+  );
 });
 
-const Alert = ({ children, variant, classes, ...rest }) => (
-  <Card className={variant === 'danger' ? classes.error : classes.other}>
-    <CardContent>{children}</CardContent>
-  </Card>
-);
+Alert.propTypes = {
+  variant: PropTypes.oneOf(
+    ['error', 'danger', 'success', 'warning', 'primary', 'secondary', 'info', 'light', 'dark']),
+};
 
-registerComponent({ name: 'Alert', component: Alert, hocs: [[withStyles, AlertStyle]] });
+Alert.displayName = 'Alert';
+
+registerComponent({ name: 'Alert', component: Alert });

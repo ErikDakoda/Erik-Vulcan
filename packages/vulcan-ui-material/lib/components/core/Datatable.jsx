@@ -185,8 +185,6 @@ class Datatable extends PureComponent {
                 <div className={classes.addButtonWrapper}>
                   <Components.NewButton
                     collection={collection}
-                    variant="fab"
-                    color="primary"
                     className={classes.addButton}
                   />
                 </div>

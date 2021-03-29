@@ -11,45 +11,80 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import classNames from 'classnames';
 import _omit from 'lodash/omit';
 
-const styles = theme => ({
-  formInput: {
-    position: 'relative',
-    marginBottom: theme.spacing(3),
-    '&:last-child': {
-      marginBottom: 0,
+const styles = theme => {
+  const formSwitchRoot = {
+    '& [class*="FormSwitch-inputRoot"]': {
+      transform: 'translateY(8px)',
     },
-  },
+  };
 
-  halfWidthLeft: {
-    display: 'inline-block',
-    width: '48%',
-    verticalAlign: 'top',
-    marginRight: '4%',
-  },
+  const formControlLabel = {
+    '& [class*="MuiFormControlLabel-label"]': {
+      fontSize: 15,
+    },
+  }
 
-  halfWidthRight: {
-    display: 'inline-block',
-    width: '48%',
-    verticalAlign: 'top',
-  },
+  return {
+    formInput: {
+      position: 'relative',
+      marginBottom: theme.spacing(3),
+      '&:last-child': {
+        marginBottom: 0,
+      },
+    },
 
-  thirdWidthLeft: {
-    display: 'inline-block',
-    width: '31%',
-    verticalAlign: 'top',
-    marginRight: '3.5%',
-  },
+    halfWidthLeft: {
+      display: 'inline-block',
+      width: '48%',
+      verticalAlign: 'top',
+      marginRight: '4%',
+      ...formSwitchRoot,
+    },
 
-  thirdWidthRight: {
-    display: 'inline-block',
-    width: '31%',
-    verticalAlign: 'top',
-  },
+    halfWidthRight: {
+      display: 'inline-block',
+      width: '48%',
+      verticalAlign: 'top',
+      ...formSwitchRoot,
+    },
 
-  hidden: {
-    display: 'none',
-  },
-});
+    thirdWidthLeft: {
+      display: 'inline-block',
+      width: '31%',
+      verticalAlign: 'top',
+      marginRight: '3.5%',
+      ...formSwitchRoot,
+    },
+
+    thirdWidthRight: {
+      display: 'inline-block',
+      width: '31%',
+      verticalAlign: 'top',
+      ...formSwitchRoot,
+    },
+
+    quarterWidthLeft: {
+      display: 'inline-block',
+      width: '22%',
+      verticalAlign: 'top',
+      marginRight: '4%',
+      ...formControlLabel,
+      ...formSwitchRoot,
+    },
+
+    quarterWidthRight: {
+      display: 'inline-block',
+      width: '22%',
+      verticalAlign: 'top',
+      ...formControlLabel,
+      ...formSwitchRoot,
+    },
+
+    hidden: {
+      display: 'none',
+    },
+  };
+};
 
 class FormComponentInner extends PureComponent {
   getProperties = () => {

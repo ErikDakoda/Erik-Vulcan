@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { instantiateComponent, replaceComponent } from 'meteor/vulcan:core';
+import { instantiateComponent, replaceComponent, Utils } from 'meteor/vulcan:core';
 import { intlShape } from 'meteor/vulcan:i18n';
 import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
@@ -31,15 +31,15 @@ const FormNestedArrayLayout = (props, context) => {
   } = props;
   const { intl } = context;
   const FormComponents = formComponents;
-  
+
   return (
     <div className="form-nested-array-layout">
-      
+
       {instantiateComponent(beforeComponent, props)}
-      
+
       {
         !hideLabel &&
-        
+
         <Typography
           component="label"
           variant="subtitle1"
@@ -48,24 +48,24 @@ const FormNestedArrayLayout = (props, context) => {
           {label}
         </Typography>
       }
-      
+
       {children}
-      
+
       {
         addItem &&
-        
+
         <Grid container direction="column" alignItems="flex-end">
-          <Fab 
-            color="primary" 
-            onClick={addItem} 
-            className="form-nested-button" 
-            aria-label={intl.formatMessage({ id: 'forms.add_nested_field' }, { label: label })}
+          <Fab
+            color="primary"
+            onClick={addItem}
+            className="form-nested-button"
+            aria-label={intl.formatMessage({ id: 'forms.add_nested_field' }, { label: Utils.singularize(label) })}
           >
             <AddIcon/>
           </Fab>
         </Grid>
       }
-      
+
       {
         hasErrors
           ?
@@ -73,9 +73,9 @@ const FormNestedArrayLayout = (props, context) => {
           :
           null
       }
-      
+
       {instantiateComponent(afterComponent, props)}
-    
+
     </div>
   );
 };

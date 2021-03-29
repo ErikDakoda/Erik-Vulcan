@@ -341,7 +341,7 @@ export const countryInfo = {
       { value: 'WA', label: 'Western Australia' },
     ],
   },
-  UK: {
+  GB: {
     regionLabel: 'County',
     postalLabel: 'Postcode',
   },

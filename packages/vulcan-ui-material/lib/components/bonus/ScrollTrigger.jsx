@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _throttle from 'lodash/throttle';
 
+// TODO: Migrate to IntersectionObserver pattern
+//  https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
 class ScrollTrigger extends Component {
 
   constructor (props) {
