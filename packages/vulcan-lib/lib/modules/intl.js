@@ -9,6 +9,8 @@ export const Strings = {};
 
 export const Domains = {};
 
+export const defaultValues = {};
+
 export const addStrings = (localeId, strings) => {
   if (typeof Strings[localeId] === 'undefined') {
     Strings[localeId] = {};
@@ -18,6 +20,10 @@ export const addStrings = (localeId, strings) => {
     ...strings,
   };
 };
+
+export const addDefaultValues = (values) => {
+  Object.assign(defaultValues, values);
+}
 
 export const getString = ({ id, values, defaultMessage, messages, locale }) => {
   let message = '';
@@ -37,9 +43,10 @@ export const getString = ({ id, values, defaultMessage, messages, locale }) => {
     message = defaultMessage;
   }
 
-  if (values && typeof values === 'object' && typeof message === 'string') {
-    message = pluralizeString(message, values);
-    message = substituteStringValues(message, values);
+  if (typeof message === 'string' && message.includes('{')) {
+    const allValues = Object.assign({}, defaultValues, values);
+    message = pluralizeString(message, allValues);
+    message = substituteStringValues(message, allValues);
   }
 
   return message;
