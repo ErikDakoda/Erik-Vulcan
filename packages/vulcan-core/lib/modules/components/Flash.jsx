@@ -5,6 +5,7 @@ import {intlShape} from 'meteor/vulcan:i18n';
 
 const Flash = (props) => {
   const {message, type} = props.message;
+  const variant = type === 'error' ? 'danger' : type;
 
   const dismissFlash = (e) => {
     e.preventDefault();
@@ -13,7 +14,7 @@ const Flash = (props) => {
 
   return (
       <Components.Alert className="flash-message"
-                        variant={type}
+                        variant={variant}
                         onClose={dismissFlash}>
         <span dangerouslySetInnerHTML={{__html: message}}/>
       </Components.Alert>

@@ -196,6 +196,7 @@ class App extends PureComponent {
                 <Components.Loading />
               </div>
             )}
+            <Components.AppComponents/>
           </div>
         </IntlContext.Provider>
       </IntlProvider>

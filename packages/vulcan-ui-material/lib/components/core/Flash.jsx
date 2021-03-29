@@ -49,7 +49,10 @@ const Flash = (props, context) => {
   const classes = useStyles(props);
   const intl = context.intl;
   const { message, type, _id } = props.message;
-  const infoOrError = ['info', 'success'].includes(type) ? 'info' : 'error';
+  const severity = ['error', 'danger'].includes(type) ? 'error' :
+    ['primary', 'secondary', 'info', 'light', 'dark'].includes(type) ? 'info' :
+      type; // 'success' or 'warning'
+  const infoOrError = ['error', 'warning'].includes(type) ? 'error' : 'info';
   const hideDuration = getSetting(`flash.${infoOrError}HideSeconds`) * 1000;
 
   const handleClose = (event, reason) => {
@@ -84,7 +87,7 @@ const Flash = (props, context) => {
               ]}
     >
       <Alert onClose={handleClose}
-             severity={infoOrError}
+             severity={severity}
              variant="filled"
              classes={{
                root: classes.alert,

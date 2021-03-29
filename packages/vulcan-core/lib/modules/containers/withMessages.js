@@ -38,9 +38,11 @@ const normalizeMessage = (messageObject, intl) => {
       properties,
     );
 
-    const transformedType = type === 'error' ? 'danger' :
-      !['danger', 'success', 'warning'].includes(type) ? 'info' :
-        type;
+    const allowedTypes = [
+      'error', 'danger', 'primary', 'secondary',
+      'info', 'success', 'warning', 'light', 'dark',
+    ];
+    const transformedType = allowedTypes.includes(type) ? type : 'info';
 
     return {
       ...messageObject,
