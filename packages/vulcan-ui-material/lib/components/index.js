@@ -15,7 +15,9 @@ import './bonus/TooltipIntl';
 
 import './core/Avatar';
 import './core/Card';
+import './core/Card2';
 import './core/Datatable';
+import './core/Datatable2';
 import './core/EditButton';
 import './core/Flash';
 import './core/Loading';
