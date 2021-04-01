@@ -48,7 +48,7 @@ const styles = theme => ({
   },
 
   button: {},
-
+  
   buttonOrSubmit: {},
 
   fab: {},
@@ -193,7 +193,7 @@ const TooltipButton = (props, {intl}) => {
           {
             type === 'menu'
 
-                ?
+                    ?
 
                 <MenuItem
                     className={classNames(slug, classes.button, classes.menu, dangerClass)}
@@ -207,11 +207,11 @@ const TooltipButton = (props, {intl}) => {
                   <ListItemText primary={labelText}/>
                 </MenuItem>
 
-                :
+                    :
 
                 type === 'fab' && !!icon
 
-                    ?
+                            ?
 
                     <>
                       <Fab
@@ -230,7 +230,15 @@ const TooltipButton = (props, {intl}) => {
                                                     className={classes.progress}/>}
                     </>
 
-                    :
+                            :
+                            
+                            linkTo ?
+
+                                <Link to={linkTo} {...properties}>
+                                  {children}
+                                </Link>
+                                
+                                :
 
                     ['button', 'submit'].includes(type)
 

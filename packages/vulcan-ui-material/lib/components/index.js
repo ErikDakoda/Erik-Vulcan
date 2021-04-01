@@ -44,6 +44,7 @@ import './forms/controls/DateTime';
 import './forms/controls/DateTimeRdt';
 import './forms/controls/Default';
 import './forms/controls/Password';
+import './forms/controls/Percent';
 export * from './forms/controls/Email';
 import './forms/controls/Number';
 import './forms/controls/PostalCode';

@@ -6,24 +6,24 @@ import MuiAlert from '@material-ui/lab/Alert';
 const Alert = React.forwardRef((props, ref) => {
   const { children, variant = 'error', ...rest } = props;
   const severity = ['error', 'danger'].includes(variant) ? 'error' :
-    ['primary', 'secondary', 'info', 'light', 'dark'].includes(variant) ? 'info' :
-      variant; // 'success' or 'warning'
+      ['primary', 'secondary', 'info', 'light', 'dark'].includes(variant) ? 'info' :
+          variant; // 'success' or 'warning'
 
   return (
-    <MuiAlert
-      ref={ref}
-      severity={severity}
-      variant="standard"
-      {...rest}
-    >
-      {children}
-    </MuiAlert>
+      <MuiAlert
+          ref={ref}
+          severity={severity}
+          variant="filled"
+          {...rest}
+      >
+        {children}
+      </MuiAlert>
   );
 });
 
 Alert.propTypes = {
   variant: PropTypes.oneOf(
-    ['error', 'danger', 'success', 'warning', 'primary', 'secondary', 'info', 'light', 'dark']),
+      ['error', 'danger', 'success', 'warning', 'primary', 'secondary', 'info', 'light', 'dark']),
 };
 
 Alert.displayName = 'Alert';

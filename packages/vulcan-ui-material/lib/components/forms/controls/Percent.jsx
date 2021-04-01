@@ -29,7 +29,7 @@ const Percent = ({ refFunction, value, handleChange, ...properties }) => {
                     handleChange={value => handleChange(value / 100)}
                     addonAfter={() => <PercentIcon className={classes.icon}/>}
   />;
-}
+};
 
 
 registerComponent('FormComponentPercent', Percent);
